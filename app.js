@@ -9,11 +9,14 @@ app.use(express.urlencoded({ extended: true }));
 // Use task routes
 app.use('/tasks', taskRoutes);
 
-app.listen(port, (err) => {
-    if (err) {
-        return console.log('Something bad happened', err);
-    }
-    console.log(`Server is listening on ${port}`);
-});
+// Only start server if not being required (e.g., for testing)
+if (require.main === module) {
+    app.listen(port, (err) => {
+        if (err) {
+            return console.log('Something bad happened', err);
+        }
+        console.log(`Server is listening on ${port}`);
+    });
+}
 
 module.exports = app;

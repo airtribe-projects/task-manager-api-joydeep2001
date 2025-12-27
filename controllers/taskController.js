@@ -2,6 +2,25 @@
 let tasks = [];
 let nextId = 1;
 
+// Load initial tasks from task.json if available
+try {
+    const taskData = require('../task.json');
+    if (taskData && taskData.tasks) {
+        tasks = taskData.tasks.map(task => ({
+            ...task,
+            priority: task.priority || 'medium',
+            createdAt: task.createdAt || new Date().toISOString()
+        }));
+        // Set nextId to be one more than the highest existing ID
+        if (tasks.length > 0) {
+            nextId = Math.max(...tasks.map(t => t.id)) + 1;
+        }
+    }
+} catch (err) {
+    // If task.json doesn't exist or can't be loaded, start with empty tasks
+    console.log('Starting with empty task list');
+}
+
 // Get all tasks with filtering and sorting
 const getAllTasks = (req, res) => {
     let filteredTasks = [...tasks];
@@ -151,7 +170,7 @@ const deleteTask = (req, res) => {
     }
 
     tasks.splice(taskIndex, 1);
-    res.status(204).send();
+    res.status(200).json({ message: 'Task deleted successfully' });
 };
 
 // Get tasks by priority level
